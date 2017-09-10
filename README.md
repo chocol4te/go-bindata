@@ -137,17 +137,18 @@ func myfile() []byte {
 ```
 
 
-### Optional compression
+### Compression
 
-When the `-nocompress` flag is given, the supplied resource is *not* GZIP
-compressed before being turned into Go code. The data should still be accessed
+go-bindata offers both LZ4 and LZMA compression, specified with -lz4 or -lzma. LZ4 gives reasonable compression very very quickly, while LZMA offers greater compression at the cost of time.
+
+When the `-nocompress` flag is given, the supplied resource is *not* compressed before being turned into Go code. The data should still be accessed
 through a function call, so nothing changes in the usage of the generated file.
 
 This feature is useful if you do not care for compression, or the supplied
 resource is already compressed. Doing it again would not add any value and may
 even increase the size of the data.
 
-The default behaviour of the program is to use compression.
+The default behaviour of the program is to use LZ4 compression.
 
 
 ### Path prefix stripping

@@ -106,6 +106,9 @@ type Config struct {
 	// the file data when called. Defaults to false.
 	NoCompress bool
 
+	LZ4 bool
+
+	LZMA bool
 	// Perform a debug build. This generates an asset file, which
 	// loads the asset contents directly from disk at their original
 	// location, instead of embedding the contents in the code.
@@ -152,6 +155,8 @@ func NewConfig() *Config {
 	c.Package = "main"
 	c.NoMemCopy = false
 	c.NoCompress = false
+	c.LZ4 = true
+	c.LZMA = false
 	c.Debug = false
 	c.Output = "./bindata.go"
 	c.Ignore = make([]*regexp.Regexp, 0)
@@ -161,6 +166,10 @@ func NewConfig() *Config {
 // validate ensures the config has sane values.
 // Part of which means checking if certain file/directory paths exist.
 func (c *Config) validate() error {
+	if c.NoCompress && (c.LZ4 || c.LZMA) || (c.LZ4 && c.LZMA) {
+		return fmt.Errorf("Only one compression flag allowed")
+	}
+
 	if len(c.Package) == 0 {
 		return fmt.Errorf("Missing package name")
 	}
